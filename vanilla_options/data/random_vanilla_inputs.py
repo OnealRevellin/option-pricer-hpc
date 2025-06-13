@@ -5,7 +5,7 @@ Generate a csv containing random inputs for vanilla options pricing.
 import numpy as np
 import pandas as pd
 
-nb_sims = 1_000_000
+nb_sims = 50_000
 S = np.random.normal(loc=100.0, scale=0.17, size=nb_sims)
 K = np.random.normal(loc=100.0, scale=0.17, size=nb_sims)
 T = np.random.uniform(0.0, 5.0, nb_sims)
@@ -22,4 +22,4 @@ df = pd.DataFrame({
     'q': q
 })
 
-df.to_csv("data/vanilla_inputs.csv", encoding="utf-8", index=False)
+df.to_csv("vanilla_options/data/vanilla_inputs.csv", encoding="utf-8", index=False)
