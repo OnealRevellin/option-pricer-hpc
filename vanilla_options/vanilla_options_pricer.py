@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+import time
 
 import numpy as np
 import pandas as pd
@@ -136,6 +137,8 @@ if __name__ == "__main__":
     sigma = np.array(inputs["sigma"])
     q = np.zeros(S.shape[0])
 
+    N = len(S)
+
     opt = VanillaOptionPricer(
         model=model,
         flavor=flavor,
@@ -147,6 +150,13 @@ if __name__ == "__main__":
         q=q
     )
 
-    values = opt.values()
-    
+    start_ns = time.perf_counter_ns()
+
+    values = opt.value()
+
+    end_ns = time.perf_counter_ns()
+    exec_time_ns = end_ns - start_ns
+    print(f"Execution time: {exec_time_ns} ns")
+    print(f"Execution time per option: {exec_time_ns / N} ns")
+
     print(values)
