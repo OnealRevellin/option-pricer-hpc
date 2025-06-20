@@ -1,5 +1,25 @@
 # option_pricer_hpc
 
+## 📊 Benchmark Results (50M Options x 100 runs)
+
+| Method                    | Avg Exec Time (s) | Avg Time per Option (ns)  |
+|---------------------------|-------------------|---------------------------|
+| Python (NumPy)            | 8.65659           | 173.1319                  |
+| C++ (no OpenMP, no opt)   | 6.96975           | 139.395                   |
+| C++ (no OpenMP, optimized)| 0.456861          | 9.13723                   |
+| C++ (OpenMP, optimized)   | 0.173291          | 3.46583                   |
+
+
+---
+
+**Note:**  
+- "Optimized" versions include compiler optimizations such as `-O3`, `-march=native`, loop unrolling, fast math, and use OpenMP for parallelism.  
+- "Not optimized" runs use default compilation without these flags or parallelization "g++ -std=c++20", resulting in significantly slower performance.
+- OpenMP versions use multi-threaded execution over CPU cores for parallel vectorized computation.
+
+---
+
+
 ## System Configuration for GBSM Option Pricer
 
 This section documents the system used for benchmarking and development of the option pricing engine.
