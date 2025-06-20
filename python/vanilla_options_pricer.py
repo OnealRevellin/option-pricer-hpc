@@ -123,7 +123,7 @@ class VanillaOptionPricer:
 
 
 if __name__ == "__main__":
-    N = 1_000_000
+    N = 50_000_000
 
     np.random.seed(42)
     S = np.random.uniform(50, 150, N)
