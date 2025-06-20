@@ -1,12 +1,26 @@
 #include "gbsm.h"
 
 #include <iostream>
-#include <vector>
 #include <cmath>
 #include <algorithm>
 #include <omp.h>
 
-using namespace std;
+
+inline double fast_norm_cdf(double x) {
+    // Abramowitz & Stegun approximation
+    static constexpr double a1 = 0.319381530;
+    static constexpr double a2 = -0.356563782;
+    static constexpr double a3 = 1.781477937;
+    static constexpr double a4 = -1.821255978;
+    static constexpr double a5 = 1.330274429;
+    static constexpr double inv_sqrt_2pi = 0.3989422804014327;
+    
+    double L = std::fabs(x);
+    double k = 1.0 / (1.0 + 0.2316419 * L);
+    double w = 1.0 - inv_sqrt_2pi * std::exp(-L * L / 2) *
+                    (a1 * k + a2 * k*k + a3 * std::pow(k,3) + a4 * std::pow(k,4) + a5 * std::pow(k,5));
+    return (x < 0.0) ? 1.0 - w : w;
+}
 
 
 inline double norm_cdf(double x) {
@@ -14,39 +28,42 @@ inline double norm_cdf(double x) {
 }
 
 
-vector<double> gbsm_value(
-    const vector<bool> &is_call,
-    const vector<double> &S,
-    const vector<double> &K,
-    const vector<double> &T,
-    const vector<double> &r,
-    const vector<double> &sigma,
-    const vector<double> &b
+std::vector<double> gbsm_value(
+    const std::vector<uint8_t>& is_call,
+    const std::vector<double>& S,
+    const std::vector<double>& K,
+    const std::vector<double>& T,
+    const std::vector<double>& r,
+    const std::vector<double>& sigma,
+    const std::vector<double>& b
 )
 {
     omp_set_num_threads(omp_get_max_threads());
 
-    vector<double> values(S.size());
+    std::vector<double> values(S.size());
     double sqrtT, d1, d2;
+    double ebrT, erT;
 
     #pragma omp parallel for
     for (long long i = 0; i < static_cast<long long>(S.size()); ++i)
     {
-        if (T[i] <= 0.0)
-        {
-            values[i] = is_call[i] ? max(S[i] - K[i], 0.0) : max(K[i] - S[i], 0.0);
-            continue;
-        }
-        sqrtT = sqrt(T[i]);
+        double intrinsic = is_call[i] ? std::max(S[i] - K[i], 0.0) : std::max(K[i] - S[i], 0.0);
 
-        d1 = (log(S[i] / K[i]) + (b[i] + pow(sigma[i], 2) * T[i]) ) / (sigma[i] * sqrtT);
+        sqrtT = sqrt(T[i]);
+        ebrT = std::exp((b[i] - r[i]) * T[i]);
+        erT  = std::exp(-r[i] * T[i]);
+
+        d1 = (std::log(S[i] / K[i]) + (b[i] + 0.5 * std::pow(sigma[i], 2)) * T[i]) / (sigma[i] * sqrtT);
         d2 = d1 - sigma[i] * sqrtT;
 
-        values[i] = (
+        double val = (
             is_call[i] ? 
-            S[i] * exp((b[i] - r[i]) * T[i]) * norm_cdf(d1) - K[i] * exp(-r[i] * T[i]) * norm_cdf(d2)
-            : K[i] * exp(-r[i] * T[i]) * norm_cdf(-d2) - S[i] * exp((b[i] - r[i]) * T[i]) * norm_cdf(-d1)
+            S[i] * ebrT * fast_norm_cdf(d1) - K[i] * erT * fast_norm_cdf(d2)
+            : K[i] * erT * fast_norm_cdf(-d2) - S[i] * ebrT * fast_norm_cdf(-d1)
         );
+
+        bool expired = (T[i] <= 0.0);
+        values[i] = expired ? intrinsic : val;
     }
 
     return values;
@@ -54,4 +71,3 @@ vector<double> gbsm_value(
 
 
 
-//g++ -O3 -march=native -ffast-math -funroll-loops -fopenmp -std=c++20 gbsm.cpp -o gbsm

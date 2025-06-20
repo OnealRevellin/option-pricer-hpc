@@ -3,17 +3,19 @@
 #define GBSM_H
 
 #include <vector>
-using namespace std;
+#include <cstdint>
 
 inline double norm_cdf(double);
-vector<double> gbsm_value(
-    const vector<bool> &is_call,
-    const vector<double> &S,
-    const vector<double> &K,
-    const vector<double> &T,
-    const vector<double> &r,
-    const vector<double> &sigma,
-    const vector<double> &b
+inline double fast_norm_cdf(double);
+
+std::vector<double> gbsm_value(
+    const std::vector<uint8_t>& is_call,
+    const std::vector<double>& S,
+    const std::vector<double>& K,
+    const std::vector<double>& T,
+    const std::vector<double>& r,
+    const std::vector<double>& sigma,
+    const std::vector<double>& b
 );
 
 #endif // GBSM_H
