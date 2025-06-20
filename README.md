@@ -30,17 +30,22 @@ This project implements a **vectorized and parallelized option pricer** using th
 - CMake ≥ 3.16
 
 ### Build with CMake
-bash
+'bash
+
 git clone https://github.com/OnealRevellin/option-pricer-hpc.git
+
 cd option-pricer-hpc
 
 mkdir build
+
 cd build
 
 cmake ..
+
 make -j$(nproc)
 
 #Run the exe file.
+
 ./option_pricer_hpc
 
 
