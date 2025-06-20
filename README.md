@@ -1,5 +1,8 @@
 # option_pricer_hpc
 
+This project implements a **vectorized and parallelized option pricer** using the Generalized Black-Scholes-Merton (GBSM) model. Designed for speed, this tool benchmarks different configurations in C++ and Python (NumPy) across millions of options.
+
+
 ## Benchmark Results (50M Options x 100 runs)
 
 | Method                    | Avg Exec Time (s) | Avg Time per Option (ns)  |
@@ -18,6 +21,27 @@
 - OpenMP versions use multi-threaded execution over CPU cores for parallel vectorized computation.
 
 ---
+
+
+## Build Instructions (CMake)
+
+### 🛠 Dependencies
+- C++20 compatible compiler (e.g., `g++ >= 11`)
+- CMake ≥ 3.16
+
+### 🧱 Build with CMake
+```bash
+git clone https://github.com/OnealRevellin/option-pricer-hpc.git
+cd option-pricer-hpc
+
+mkdir build
+cd build
+
+cmake ..
+make -j$(nproc)
+
+# Run the exe file.
+./option_pricer_hpc
 
 
 ## System Configuration for GBSM Option Pricer
