@@ -29,8 +29,8 @@ This project implements a **vectorized and parallelized option pricer** using th
 - C++20 compatible compiler (e.g., `g++ >= 11`)
 - CMake ≥ 3.16
 
-### 🧱 Build with CMake
-```bash
+### Build with CMake
+bash
 git clone https://github.com/OnealRevellin/option-pricer-hpc.git
 cd option-pricer-hpc
 
@@ -40,7 +40,7 @@ cd build
 cmake ..
 make -j$(nproc)
 
-# Run the exe file.
+#Run the exe file.
 ./option_pricer_hpc
 
 
