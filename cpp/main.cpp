@@ -1,4 +1,4 @@
-#include "models/gbsm.h"
+#include "vanilla_options_pricer.h"
 
 #include <iostream>
 #include <random>
@@ -6,23 +6,23 @@
 
 int main()
 {
+
     const size_t N = 50'000'000;
-
     // inputs generator
-    random_device rd;
-    mt19937 gen(rd());
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
-    uniform_real_distribution<> spot_dist(50, 150);
-    uniform_real_distribution<> strike_dist(50, 150);
-    uniform_real_distribution<> time_dist(0.01, 2.0);
-    uniform_real_distribution<> rate_dist(0.0, 0.1);
-    uniform_real_distribution<> vol_dist(0.1, 0.5);
-    uniform_real_distribution<> carry_dist(-0.05, 0.05);
-    bernoulli_distribution call_put_dist(0.5);
+    std::uniform_real_distribution<> spot_dist(50, 150);
+    std::uniform_real_distribution<> strike_dist(50, 150);
+    std::uniform_real_distribution<> time_dist(0.01, 2.0);
+    std::uniform_real_distribution<> rate_dist(0.0, 0.1);
+    std::uniform_real_distribution<> vol_dist(0.1, 0.5);
+    std::uniform_real_distribution<> carry_dist(-0.05, 0.05);
+    std::bernoulli_distribution call_put_dist(0.5);
 
     // Generate random inputs
-    vector<bool> is_call(N);
-    vector<double> S(N), K(N), T(N), r(N), sigma(N), b(N);
+    std::vector<uint8_t> is_call(N);
+    std::vector<double> S(N), K(N), T(N), r(N), sigma(N), b(N);
 
     for (size_t i = 0; i < N; ++i) {
         is_call[i] = call_put_dist(gen);
@@ -34,20 +34,27 @@ int main()
         b[i] = carry_dist(gen);
     }
 
-    auto start = chrono::high_resolution_clock::now();
-    vector<double> result = gbsm_value(is_call, S, K, T, r, sigma, b);
-    auto end = chrono::high_resolution_clock::now();
+    VanillaOptionsPricer pricer = VanillaOptionsPricer(is_call, S, K, T, r, sigma, b);
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<double> result = pricer.values();
+    auto end = std::chrono::high_resolution_clock::now();
 
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-    cout << "Execution time: " << duration << " nanoseconds" << "\n";
-    cout << "Execution time per option: " << (duration/N) << " nanoseconds" << "\n";
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
+    
+    std::cout << "Execution time: " << duration << " nanoseconds" << "\n";
+    std::cout << "Execution time per option: " << (duration/N) << " nanoseconds" << "\n";
+    
+    
     for (int i = 0; i < 5; ++i) {
-        cout << "Option " << i << ": Value = " << result[i] << "\n";
+        std::cout << "Option " << i << ": Value = " << result[i] << "\n";
+        std::cout << "Params : [" << static_cast<int>(is_call[i]) << ", " << S[i] << ", " << K[i] << ", " << T[i] << ", " << sigma[i] << ", " << r[i] << std::endl;
     }
-
-    cout << "Option " << N << ": Value = " << result[N-1] << "\n";
+    std::cout << "Option " << N << ": Value = " << result[N-1] << "\n";
 
     return 0;
 
 }
+
+
+//g++ -O3 -march=native -ffast-math -funroll-loops -fopenmp -std=c++20 main.cpp "vanilla_options_pricer.cpp" "models/gbsm.cpp" -o main
