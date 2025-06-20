@@ -1,6 +1,6 @@
 # option_pricer_hpc
 
-## 📊 Benchmark Results (50M Options x 100 runs)
+## Benchmark Results (50M Options x 100 runs)
 
 | Method                    | Avg Exec Time (s) | Avg Time per Option (ns)  |
 |---------------------------|-------------------|---------------------------|
