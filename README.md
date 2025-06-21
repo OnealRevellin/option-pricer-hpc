@@ -25,7 +25,7 @@ This project implements a **vectorized and parallelized option pricer** using th
 
 ## Build Instructions (CMake)
 
-### 🛠 Dependencies
+### Dependencies
 - C++20 compatible compiler (e.g., `g++ >= 11`)
 - CMake ≥ 3.16
 
