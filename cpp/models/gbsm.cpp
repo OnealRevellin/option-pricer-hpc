@@ -1,32 +1,10 @@
 #include "gbsm.h"
+#include "../maths/stats.h"
 
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 #include <omp.h>
-
-
-inline double fast_norm_cdf(double x) {
-    // Abramowitz & Stegun approximation
-    static constexpr double a1 = 0.319381530;
-    static constexpr double a2 = -0.356563782;
-    static constexpr double a3 = 1.781477937;
-    static constexpr double a4 = -1.821255978;
-    static constexpr double a5 = 1.330274429;
-    static constexpr double inv_sqrt_2pi = 0.3989422804014327;
-    
-    double L = std::fabs(x);
-    double k = 1.0 / (1.0 + 0.2316419 * L);
-    double w = 1.0 - inv_sqrt_2pi * std::exp(-L * L / 2) *
-                    (a1 * k + a2 * k*k + a3 * std::pow(k,3) + a4 * std::pow(k,4) + a5 * std::pow(k,5));
-    return (x < 0.0) ? 1.0 - w : w;
-}
-
-
-inline double norm_cdf(double x) {
-    return 0.5 * (1.0 + erf(x / sqrt(2.0)));
-}
-
 
 std::vector<double> gbsm_value(
     const std::vector<uint8_t>& is_call,
