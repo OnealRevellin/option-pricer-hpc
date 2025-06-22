@@ -36,17 +36,21 @@ git clone https://github.com/OnealRevellin/option-pricer-hpc.git
 
 cd option-pricer-hpc
 
-mkdir build
-
-cd build
+mkdir build && cd build
 
 cmake ..
 
-make -j$(nproc)
+make -j
 
-#Run the exe file.
+#run c++ .exe:
+./pricer
 
-./option_pricer_hpc
+#If you want to run the google tests:
+#run all tests in one.
+ctest
+
+#run each of the tests.
+./test_gbsm
 
 
 ## System Configuration for GBSM Option Pricer
