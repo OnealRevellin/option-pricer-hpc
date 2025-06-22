@@ -44,13 +44,17 @@ cmake ..
 make -j
 
 #run c++ .exe:
+
 ./pricer
 
 #If you want to run the google tests:
+
 #run all tests in one.
+
 ctest
 
 #run each of the tests.
+
 ./test_gbsm
 
 
