@@ -19,9 +19,6 @@ VanillaOptionsPricer::VanillaOptionsPricer(
 )
     : is_call(is_call_), S(S_), K(K_), T(T_), r(r_), sigma(sigma_), b(b_) {}
 
-std::vector<double> values();
-
-
 std::vector<double> VanillaOptionsPricer::values()
 {
     return gbsm_value(
