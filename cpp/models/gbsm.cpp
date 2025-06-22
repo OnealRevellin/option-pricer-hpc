@@ -38,14 +38,16 @@ std::vector<double> gbsm_value(
     const std::vector<double>& b
 )
 {
-    omp_set_num_threads(omp_get_max_threads());
-
+    size_t N = S.size();
+    if (is_call.size() != N || K.size() != N || T.size() != N || r.size() != N || sigma.size() != N || b.size() != N)
+        throw std::invalid_argument("All input vectors must be the same length.");
+        
     std::vector<double> values(S.size());
     double sqrtT, d1, d2;
     double ebrT, erT;
 
     #pragma omp parallel for
-    for (long long i = 0; i < static_cast<long long>(S.size()); ++i)
+    for (int i = 0; i < N; ++i)
     {
         double intrinsic = is_call[i] ? std::max(S[i] - K[i], 0.0) : std::max(K[i] - S[i], 0.0);
 
