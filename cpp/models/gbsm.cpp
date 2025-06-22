@@ -28,13 +28,14 @@ std::vector<double> gbsm_value(
     for (int i = 0; i < N; ++i)
     {
         double intrinsic = is_call[i] ? std::max(S[i] - K[i], 0.0) : std::max(K[i] - S[i], 0.0);
+        double sigma_floor = sigma[i] <= 0.0 ? 1e-9 : sigma[i];
 
         sqrtT = sqrt(T[i]);
         ebrT = std::exp((b[i] - r[i]) * T[i]);
         erT  = std::exp(-r[i] * T[i]);
 
-        d1 = (std::log(S[i] / K[i]) + (b[i] + 0.5 * std::pow(sigma[i], 2)) * T[i]) / (sigma[i] * sqrtT);
-        d2 = d1 - sigma[i] * sqrtT;
+        d1 = (std::log(S[i] / K[i]) + (b[i] + 0.5 * std::pow(sigma_floor, 2)) * T[i]) / (sigma_floor * sqrtT);
+        d2 = d1 - sigma_floor * sqrtT;
 
         double val = (
             is_call[i] ? 
