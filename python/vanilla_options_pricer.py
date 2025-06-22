@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from models.gbsm import gbsm_value
+from models.gbsm_numba import gbsm_numba_value
 
 
 class Models(Enum):
@@ -102,14 +103,14 @@ class VanillaOptionPricer:
 
     def value(self):
         values = np.where(
-            self.flavor == Flavor.Call,
+            self.flavor == "Call",
             gbsm_value(
                 "Call", 
                 S=self.S, K=self.K, T=self.T, r=self.r, 
                 sigma=self.sigma, b=self.b
             ),
             np.where(
-                self.flavor == Flavor.Put,
+                self.flavor == "Put",
                 gbsm_value(
                     "Put", 
                     S=self.S, K=self.K, T=self.T, r=self.r, 
@@ -120,12 +121,18 @@ class VanillaOptionPricer:
         )
 
         return values
+    
+    def value_numba(self):
+        values = gbsm_numba_value(self.flavor, self.S, self.K, self.T, self.r, self.sigma, self.b)
+
+        return values
 
 
 if __name__ == "__main__":
     N = 50_000_000
 
     np.random.seed(42)
+    flavor = np.random.choice(["Call", "Put"], size=N)
     S = np.random.uniform(50, 150, N)
     K = np.random.uniform(50, 150, N)
     T = np.random.uniform(0.01, 2.0, N)
@@ -134,7 +141,6 @@ if __name__ == "__main__":
     q = np.zeros(N)
 
     model = Models.B76
-    flavor = Flavor.Call
 
     opt = VanillaOptionPricer(
         model=model,
@@ -149,7 +155,8 @@ if __name__ == "__main__":
 
     start_ns = time.perf_counter_ns()
 
-    values = opt.value()
+    # values = opt.value()
+    values = opt.value_numba()
 
     end_ns = time.perf_counter_ns()
     exec_time_ns = end_ns - start_ns

@@ -5,12 +5,13 @@ This project implements a **vectorized and parallelized option pricer** using th
 
 ## Benchmark Results (50M Options x 100 runs)
 
-| Method                    | Avg Exec Time (s) | Avg Time per Option (ns)  |
-|---------------------------|-------------------|---------------------------|
-| Python (NumPy)            | 8.65659           | 173.1319                  |
-| C++ (no OpenMP, no opt)   | 6.96975           | 139.395                   |
-| C++ (no OpenMP, optimized)| 0.456861          | 9.13723                   |
-| C++ (OpenMP, optimized)   | 0.173291          | 3.46583                   |
+| Method                             | Avg Exec Time (s) | Avg Time per Option (ns)  |
+|------------------------------------|-------------------|---------------------------|
+| Python (NumPy)                     | 8.656             | 173.131                   |
+| C++ (no OpenMP, no opt)            | 6.969             | 139.395                   |
+| Python (Numba, parallel/fastmath)  | 2.483             | 49.659                    |
+| C++ (no OpenMP, optimized)         | 0.456             | 9.137                     |
+| C++ (OpenMP, optimized)            | 0.173             | 3.465                     |
 
 
 ---
