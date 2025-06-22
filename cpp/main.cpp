@@ -3,9 +3,11 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <omp.h>
 
 int main()
 {
+    omp_set_num_threads(omp_get_max_threads());
 
     const size_t N = 50'000'000;
     // inputs generator
