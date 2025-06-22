@@ -1,4 +1,5 @@
 #include "vanilla_options_pricer.h"
+#include "models/gbsm_simd.h"
 
 #include <iostream>
 #include <random>
@@ -9,8 +10,9 @@ int main()
 {
     omp_set_num_threads(omp_get_max_threads());
 
+    // Number of options to price during the simulation.
     const size_t N = 50'000'000;
-    // inputs generator
+    // Inputs generator.
     std::random_device rd;
     std::mt19937 gen(rd());
 
@@ -22,7 +24,7 @@ int main()
     std::uniform_real_distribution<> carry_dist(-0.05, 0.05);
     std::bernoulli_distribution call_put_dist(0.5);
 
-    // Generate random inputs
+    // Generate N inputs to init the options pricer.
     std::vector<uint8_t> is_call(N);
     std::vector<double> S(N), K(N), T(N), r(N), sigma(N), b(N);
 
@@ -39,6 +41,7 @@ int main()
     VanillaOptionsPricer pricer = VanillaOptionsPricer(is_call, S, K, T, r, sigma, b);
     auto start = std::chrono::high_resolution_clock::now();
     std::vector<double> result = pricer.values();
+    //std::vector<double> result = gbsm_value_simd(is_call, S, K, T, r, sigma, b);
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
@@ -50,7 +53,7 @@ int main()
     
     for (int i = 0; i < 5; ++i) {
         std::cout << "Option " << i << ": Value = " << result[i] << "\n";
-        std::cout << "Params : [" << static_cast<int>(is_call[i]) << ", " << S[i] << ", " << K[i] << ", " << T[i] << ", " << sigma[i] << ", " << r[i] << std::endl;
+        std::cout << "Params : [" << static_cast<int>(is_call[i]) << ", " << S[i] << ", " << K[i] << ", " << T[i] << ", " << sigma[i] << ", " << r[i] << "]" << std::endl;
     }
     std::cout << "Option " << N << ": Value = " << result[N-1] << "\n";
 
