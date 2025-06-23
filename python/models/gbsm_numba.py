@@ -26,17 +26,19 @@ def gbsm_numba_value(
     output = np.empty(N, dtype=np.float64)
     for i in prange(N):
         sqrtT = np.sqrt(T[i])
+        exprT = np.exp(-r[i] * T[i])
+        expbrT = np.exp((b[i] - r[i]) * T[i])
         d1 = (np.log(S[i] / K[i]) + (b[i] + sigma[i]**2 / 2) * T[i]) / (sigma[i] * sqrtT)
         d2 = d1 - sigma[i] * sqrtT
 
         call_value = (
-                S[i] * np.exp((b[i] - r[i]) * T[i]) * norm_cdf(d1)
-                - K[i] * np.exp(-r[i] * T[i]) * norm_cdf(d2)
+                S[i] * expbrT * norm_cdf(d1)
+                - K[i] * exprT * norm_cdf(d2)
             )
 
         put_value = (
-                K[i] * np.exp(-r[i] * T[i]) * norm_cdf(-d2)
-                - S[i] * np.exp((b[i] - r[i]) * T[i]) * norm_cdf(-d1)
+                K[i] * exprT * norm_cdf(-d2)
+                - S[i] * expbrT * norm_cdf(-d1)
             )
         
         is_call = (flavor[i] == "Call")
