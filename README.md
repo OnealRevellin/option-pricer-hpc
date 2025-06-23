@@ -1,6 +1,6 @@
 # option_pricer_hpc
 
-This project implements a **vectorized and parallelized option pricer** using the Generalized Black-Scholes-Merton (GBSM) model. Designed for speed, this tool benchmarks different configurations in C++ and Python (NumPy) across millions of options.
+This project implements multiple **option pricing engines** using the Generalized Black-Scholes-Merton (GBSM) model. Designed for speed, this tool benchmarks different configurations in C++ and Python (NumPy) across millions of options.
 
 
 ## Benchmark Results (50M Options x 100 runs)
