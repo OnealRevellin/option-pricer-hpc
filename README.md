@@ -11,6 +11,7 @@ This project implements multiple **option pricing engines** using the Generalize
 | C++ (no OpenMP, no opt)            | 6.969             | 139.395                   |
 | Python (Numba, parallel/fastmath)  | 2.483             | 49.659                    |
 | C++ (no OpenMP, optimized)         | 0.456             | 9.137                     |
+| Python (CuPy for GPU acceleration) | 0.204             | 4.098                     |
 | C++ (OpenMP, optimized)            | 0.173             | 3.465                     |
 
 
@@ -100,7 +101,7 @@ Memory Usage (Idle): ~1.8 GiB used
 
 ---------------------------------------------------------------------------------------------------------
 
-### GPU (not currently used)
+### GPU
 
 Model: NVIDIA GeForce RTX 4080
 
